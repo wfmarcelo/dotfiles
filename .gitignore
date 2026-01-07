@@ -1,0 +1,19 @@
+# --- Neovim ---
+.netrwhist
+*.swp
+undo/
+shada/
+
+# --- Shell & System ---
+.DS_Store
+.bash_history
+.zsh_history
+.python_history
+node_modules/
+.venv/
+
+# --- Secrets & Local Overrides ---
+*.local
+*.secret
+.env
+/private/
