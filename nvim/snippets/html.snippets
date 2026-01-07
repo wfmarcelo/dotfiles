@@ -1,0 +1,15 @@
+snippet html "Lucas Mazza Template"
+	<!DOCTYPE html>
+	<html lang="pt-br">
+	<head>
+	  <meta charset="UTF-8">
+	  <title>${1:`substitute(expand('%:t:r'), '^$', 'Capítulo', '')`}</title>
+	  <link rel="stylesheet" href="../../lib/css/normalize.css">
+	  <script src="../../lib/js/prefixfree.min.js"></script>
+	  <link rel="stylesheet" href="${2:`expand('%:t:r')`}.css">
+	</head>
+	<body>
+	  $0
+	  <script src="../../lib/js/jquery.min.js"></script>
+	</body>
+	</html>
