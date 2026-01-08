@@ -11,3 +11,8 @@ require("paq") {
     "hrsh7th/cmp-nvim-lsp";      -- Allows the popup menu to see LSP data
     "NvChad/nvim-colorizer.lua";
 }
+
+-- Optional: Auto-sync on first install
+if _G.paq_bootstrap then
+    paq.install()
+end
