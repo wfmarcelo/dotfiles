@@ -1,5 +1,6 @@
+local paq = require('paq')
 -- 1. Plugin Management
-require("paq") {
+paq({
     "savq/paq-nvim";              -- Let paq manage itself
     "mattn/emmet-vim";            -- The Emmet plugin
     "L3MON4D3/LuaSnip";           -- The snippet engine
@@ -10,7 +11,9 @@ require("paq") {
     "neovim/nvim-lspconfig";      -- Standard configurations for LSPs
     "hrsh7th/cmp-nvim-lsp";      -- Allows the popup menu to see LSP data
     "NvChad/nvim-colorizer.lua";
-}
+    "David-Kunz/gen.nvim";
+    "Jacob411/Ollama-Copilot";
+})
 
 -- Optional: Auto-sync on first install
 if _G.paq_bootstrap then
