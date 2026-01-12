@@ -1,24 +1,16 @@
--- 1. Load basic editor options
-require('settings')
+-- Set <space> as the leader key
+vim.g.mapleader = ' '
+vim.g.maplocalleader = ' '
 
--- --- BOOTSTRAP PAQ ---
-local install_path = vim.fn.stdpath('data') .. '/site/pack/paqs/start/paq-nvim'
-if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
-    print("Paq not found. Cloning...")
-    vim.fn.system({'git', 'clone', '--depth=1', 'https://github.com/savq/paq-nvim.git', install_path})
-    vim.cmd('packadd paq-nvim')
+-- Load basic options
+require('config.options')
+
+-- Bootstrap lazy.nvim
+local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
+if not vim.loop.fs_stat(lazypath) then
+	vim.fn.system { 'git', 'clone', '--filter=blob:none', 'https://github.com/folke/lazy.nvim.git', '--branch=stable', lazypath }
 end
--- ---------------------
+vim.opt.rtp:prepend(lazypath)
 
--- 2. Load and sync plugins
-require('plugins')
-
--- 3. Configure specific tools
-require('config.emmet')
-require('config.snippets')
-require('config.cmp')
-require('config.format')
-require('config.lsp')
-require('config.colorizer')
-require('config.ollama')
-require('config.ollama_copilot')
+-- Load plugins from lua/plugins/*.lua
+require('lazy').setup('plugins')
