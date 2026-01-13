@@ -1,7 +1,3 @@
--- Set <space> as the leader key
-vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
-
 -- Load basic options
 require('config.options')
 
@@ -14,3 +10,7 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Load plugins from lua/plugins/*.lua
 require('lazy').setup('plugins')
+
+-- vim.keymap.set("n", "<space><space>x", "<cmd>source %<CR>")
+-- vim.keymap.set("n", "<space>x", ":.lua<CR>")
+-- vim.keymap.set("v", "<space>x", ":lua<CR>")

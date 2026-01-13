@@ -2,9 +2,9 @@ return {
   'nvim-treesitter/nvim-treesitter',
   build = ':TSUpdate',
   config = function()
-    require('nvim-treesitter.config').setup({
+    require('nvim-treesitter.config').setup {
     -- A list of parser names, or "all"
-      ensure_installed = { 'lua', 'vim', 'vimdoc', 'query', 'markdown', 'markdown_inline' },
+      ensure_installed = { 'lua', 'vim', 'vimdoc', 'query', 'markdown', 'markdown_inline' , 'csharp' },
 
       -- Automatically install missing parsers when entering:
       auto_install = false,
@@ -19,7 +19,7 @@ return {
           end
         end,
         additional_vim_regex_highlighting = false,
+      }
     }
-    })
   end,
 }
