@@ -30,3 +30,42 @@ map("n", "<C-h>", "<C-w><C-h>", { desc = "Move focus to the left window" })
 map("n", "<C-l>", "<C-w><C-l>", { desc = "Move focus to the right window" })
 map("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower window" })
 map("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
+
+-- Create an autocommand group for SQL-specific maps
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "sql",
+  callback = function()
+    -- Map <F5> to execute the query in the current buffer
+    -- 'db_exe' is a standard way to trigger Dadbod execution
+    vim.keymap.set("n", "<F5>", "<Plug>(DBUI_ExecuteQuery)", { buffer = true, desc = "Execute Query" })
+
+    -- F5: Run Query from Insert Mode (stays in Insert Mode)
+    vim.keymap.set("i", "<F5>", "<C-o><Plug>(DBUI_ExecuteQuery)", { buffer = true, desc = "Execute Query" })
+
+    -- If you want to run a visual selection with F5
+    vim.keymap.set("v", "<F5>", "<Plug>(DBUI_ExecuteQuery)", { buffer = true, desc = "Execute Selection" })
+
+    vim.opt_local.ignorecase = true
+  end,
+})
+
+local db_utils = require("utils.database")
+-- Create the :ExportCSV command
+vim.api.nvim_create_user_command("ExportCSV", db_utils.export_to_csv, { nargs = "?" })
+
+-- Force dadbod completion to favor the database's casing
+vim.g.vim_dadbod_completion_mark = ""
+
+-- C# Specific Config in init.lua
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "cs",
+  callback = function()
+    -- Map <F5> to your new smart function in dap.lua
+    vim.keymap.set("n", "<F5>", function()
+      require("plugins.dap").smart_continue()
+    end, { buffer = true, desc = "Smart Build/Continue" })
+
+    -- Insert mode support
+    vim.keymap.set("i", "<F5>", "<C-o><F5>", { buffer = true, remap = true })
+  end,
+})
