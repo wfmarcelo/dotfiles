@@ -9,41 +9,112 @@ return {
     overseer.setup(opts)
 
     -- Create a custom template for .NET Watch
+    -- overseer.register_template({
+    --   name = "Dotnet Run/watch Project",
+    --   params = {
+    --     project_path = {
+    --       type = "enum",
+    --       name = "Project",
+    --       choices = (function()
+    --         local root = vim.fn.getcwd()
+    --         local files = vim.fn.globpath(root, "**/*.csproj", true, true)
+    --         local runnable_paths = {}
+    --
+    --         for _, file in ipairs(files) do
+    --           local dir = vim.fn.fnamemodify(file, ":p:h")
+    --           -- Check if the directory has a Program.cs to filter out libraries
+    --           if vim.fn.filereadable(dir .. "/Program.cs") == 1 then
+    --             table.insert(runnable_paths, dir)
+    --           end
+    --         end
+    --
+    --         -- If no runnable projects found, fallback to CWD
+    --         return #runnable_paths > 0 and runnable_paths or { root }
+    --       end)(),
+    --     },
+    --     use_watch = {
+    --       type = "boolean",
+    --       name = "Watch Mode",
+    --       default = true,
+    --     },
+    --   },
+    --   builder = function(params)
+    --     local cmd = { "dotnet" }
+    --
+    --     print(params.project_path)
+    --
+    --     if params.use_watch then
+    --       table.insert(cmd, "watch")
+    --     end
+    --     table.insert(cmd, "run")
+    --
+    --     local project_name = vim.fn.fnamemodify(params.project_path, ":t")
+    --
+    --     return {
+    --       cmd = cmd,
+    --       cwd = params.project_path,
+    --       name = (params.use_watch and "󰁪 " or "󰐊 ") .. project_name,
+    --       components = { "default", "on_exit_set_status" },
+    --     }
+    --   end,
+    --   condition = {
+    --     callback = function()
+    --       return vim.fn.glob("*.sln") ~= "" or vim.fn.glob("**/*.csproj") ~= ""
+    --     end,
+    --   },
+    -- })
     overseer.register_template({
-      name = "Dotnet Hot Reload",
-      generator = function(search_opts, cb)
-        -- We are removing all filters.
-        -- This will simply try to run the command in your current directory.
-        cb({
-          overseer.wrap_template({
-            name = "🚀 Run Dotnet Watch",
-            autostart = true,
-            strategy = "terminal",
-            -- We use 'run' directly here for the simplest test
-            cmd = { "dotnet", "watch", "run" },
-            priority = 1,
-            components = { "default", "on_exit_set_status" },
-          }, { name = "Dotnet Hot Reload" }),
-        })
+      name = "Dotnet Run/Watch",
+      generator = function(_, cb)
+        local root = vim.fn.getcwd()
+        local files = vim.fn.globpath(root, "**/*.csproj", true, true)
+        local tasks = {}
+
+        for _, file in ipairs(files) do
+          local dir = vim.fn.fnamemodify(file, ":p:h")
+          -- Only include folders that have a Program.cs
+          if vim.fn.filereadable(dir .. "/Program.cs") == 1 then
+            local project_name = vim.fn.fnamemodify(dir, ":t")
+
+            -- We create two tasks for each project: Run and Watch
+            table.insert(tasks, {
+              name = "󰐊 Run: " .. project_name,
+              builder = function()
+                return {
+                  cmd = { "dotnet", "run" },
+                  cwd = dir,
+                  components = { "default", "on_exit_set_status" },
+                }
+              end,
+            })
+
+            table.insert(tasks, {
+              name = "󰁪 Watch: " .. project_name,
+              builder = function()
+                return {
+                  cmd = { "dotnet", "watch", "run" },
+                  cwd = dir,
+                  components = { "default", "on_exit_set_status" },
+                }
+              end,
+            })
+          end
+        end
+
+        cb(tasks)
       end,
-      -- Removing the 'condition' entirely ensures it ALWAYS appears in the menu
+      condition = {
+        callback = function()
+          return vim.fn.glob("*.sln") ~= "" or vim.fn.glob("**/*.csproj") ~= ""
+        end,
+      },
     })
 
     -- Custom mapping to open the task list
     vim.keymap.set("n", "<leader>to", "<cmd>OverseerToggle<cr>", { desc = "Task: Toggle List" })
 
     -- Shift+F5: Runs YOUR custom "Dotnet Hot Reload" template immediately
-    vim.keymap.set("n", "<S-F5>", function()
-      local overseer = require("overseer")
-      -- This looks for your custom template by name
-      overseer.run_template({ name = "Dotnet Hot Reload" }, function(task)
-        if task then
-          overseer.open({ enter = false })
-        else
-          vim.notify("Dotnet Hot Reload template not found!", vim.log.levels.ERROR)
-        end
-      end)
-    end, { desc = "Task: Dotnet Hot Reload" })
+    vim.keymap.set("n", "<F17>", "<cmd>OverseerRun<cr>", { desc = "Task: Run" })
 
     -- "Kill All" logic
     vim.keymap.set("n", "<leader>rq", function()
