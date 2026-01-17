@@ -58,6 +58,7 @@ return {
     "seblyng/roslyn.nvim",
     ft = "cs",
     config = function()
+      local manson_settings = require("mason.settings")
       require("roslyn").setup({
         args = {
           "--logLevel=Information",
@@ -72,5 +73,27 @@ return {
         },
       })
     end,
+  },
+  {
+    "GustavEikaas/easy-dotnet.nvim",
+    dependencies = { "nvim-lua/plenary.nvim", "nvim-telescope/telescope.nvim" },
+    config = function()
+      require("easy-dotnet").setup({
+        -- This will automatically populate the quickfix list on build
+        diagnostics = {
+          setqflist = true,
+        },
+      })
+    end,
+  },
+  {
+    "folke/lazydev.nvim",
+    ft = "lua", -- only load on lua files
+    opts = {
+      library = {
+        -- Load luvit types when the `vim.uv` word is found
+        { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+      },
+    },
   },
 }
