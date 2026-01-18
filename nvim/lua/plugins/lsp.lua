@@ -13,7 +13,8 @@ return {
     end,
   },
   {
-    "williamboman/mason-lspconfig.nvim",
+    "neovim/nvim-lspconfig",
+    dependencies = { "williamboman/mason-lspconfig.nvim" },
     config = function()
       require("mason-lspconfig").setup({
         ensure_installed = { "lua_ls", "pyright", "sqls" },
