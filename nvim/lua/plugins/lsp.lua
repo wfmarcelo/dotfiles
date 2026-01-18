@@ -22,13 +22,7 @@ return {
 
       -- The New 0.11+ Way:
       -- Instead of lspconfig.server.setup(), we use vim.lsp.enable
-      vim.lsp.enable("lua_ls", {
-        settings = {
-          Lua = {
-            format = { enable = true },
-          },
-        },
-      })
+      vim.lsp.enable("lua_ls")
       vim.lsp.enable("pyright")
       vim.lsp.enable("sqls")
 
@@ -47,8 +41,8 @@ return {
           map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
           -- Add these to your keymap function in lsp.lua
           map("<leader>e", vim.diagnostic.open_float, "Show diagnostic [E]rror messages")
-          map("[d", vim.diagnostic.goto_prev, "Go to previous [D]iagnostic message")
-          map("]d", vim.diagnostic.goto_next, "Go to next [D]iagnostic message")
+          -- map("[d", vim.diagnostic.goto_prev, "Go to previous [D]iagnostic message")
+          -- map("]d", vim.diagnostic.goto_next, "Go to next [D]iagnostic message")
           map("<leader>q", vim.diagnostic.setloclist, "Open diagnostic [Q]uickfix list")
         end,
       })
@@ -59,7 +53,6 @@ return {
     "seblyng/roslyn.nvim",
     ft = "cs",
     config = function()
-      local manson_settings = require("mason.settings")
       require("roslyn").setup({
         args = {
           "--logLevel=Information",
