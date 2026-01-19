@@ -66,18 +66,18 @@ return {
       })
     end,
   },
-  {
-    "GustavEikaas/easy-dotnet.nvim",
-    dependencies = { "nvim-lua/plenary.nvim", "nvim-telescope/telescope.nvim" },
-    config = function()
-      require("easy-dotnet").setup({
-        -- This will automatically populate the quickfix list on build
-        diagnostics = {
-          setqflist = true,
-        },
-      })
-    end,
-  },
+  -- {
+  --   "GustavEikaas/easy-dotnet.nvim",
+  --   dependencies = { "nvim-lua/plenary.nvim", "nvim-telescope/telescope.nvim" },
+  --   config = function()
+  --     require("easy-dotnet").setup({
+  --       -- This will automatically populate the quickfix list on build
+  --       diagnostics = {
+  --         setqflist = true,
+  --       },
+  --     })
+  --   end,
+  -- },
   {
     "folke/lazydev.nvim",
     ft = "lua", -- only load on lua files
