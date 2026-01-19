@@ -40,9 +40,7 @@ return {
           map("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
           map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
           -- Add these to your keymap function in lsp.lua
-          map("<leader>e", vim.diagnostic.open_float, "Show diagnostic [E]rror messages")
-          -- map("[d", vim.diagnostic.goto_prev, "Go to previous [D]iagnostic message")
-          -- map("]d", vim.diagnostic.goto_next, "Go to next [D]iagnostic message")
+          map("<leader>d", vim.diagnostic.open_float, "Show diagnostic [E]rror messages")
           map("<leader>q", vim.diagnostic.setloclist, "Open diagnostic [Q]uickfix list")
         end,
       })
