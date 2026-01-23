@@ -4,6 +4,7 @@ local M = {
     "rcarriga/nvim-dap-ui",
     "nvim-neotest/nvim-nio",
     "nicholasmata/nvim-dap-cs",
+    "mfussenegger/nvim-dap-python",
   },
 }
 
@@ -95,6 +96,8 @@ function M.config()
   dapui.setup()
   require("dap-cs").setup()
 
+  require("dap-python").setup(".venv/bin/python")
+
   -- Automatically open/close UI when debugging starts/ends
   dap.listeners.before.attach.dapui_config = function()
     dapui.open()
@@ -111,6 +114,7 @@ function M.config()
   dap.listeners.before.event_exited.dapui_config = function()
     dapui.close()
   end
+
   -- Keybindings
   vim.keymap.set("n", "<F5>", M.smart_continue, { desc = "Debug: Start/Continue" })
   vim.keymap.set("n", "<C-F5>", "<cmd>OverseerRestartLast<cr>", { desc = "Task: Restart Last" })
