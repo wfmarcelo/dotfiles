@@ -1,5 +1,15 @@
 return {
   {
+    "folke/lazydev.nvim",
+    ft = "lua", -- only load on lua files
+    opts = {
+      library = {
+        -- Load luvit types when the `vim.uv` word is found
+        { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+      },
+    },
+  },
+  {
     "williamboman/mason.nvim",
     opts = {
       -- This adds the community registries so you can find 'roslyn'
@@ -17,7 +27,11 @@ return {
     dependencies = { "williamboman/mason-lspconfig.nvim" },
     config = function()
       require("mason-lspconfig").setup({
-        ensure_installed = { "lua_ls", "pyright", "sqls" },
+        ensure_installed = {
+          "lua_ls",
+          "pyright",
+          "sqls",
+        },
       })
 
       -- The New 0.11+ Way:
@@ -25,6 +39,8 @@ return {
       vim.lsp.enable("lua_ls")
       vim.lsp.enable("pyright")
       vim.lsp.enable("sqls")
+
+      vim.lsp.enable("roslyn", {})
 
       -- Kickstart Keybindings using the new LspAttach logic
       vim.api.nvim_create_autocmd("LspAttach", {
@@ -49,43 +65,39 @@ return {
   {
     -- Modern C# support
     "seblyng/roslyn.nvim",
-    ft = "cs",
+    ft = { "cs", "razor", "cshtml" },
+    lazy = false,
     config = function()
+      local mason_path = vim.fn.stdpath("data") .. "/mason/packages/roslyn/libexec"
+
       require("roslyn").setup({
         args = {
-          "--logLevel=Information",
-          "--extensionLogDirectory=" .. vim.fs.dirname(vim.lsp.get_log_path()),
           "--stdio",
-          "--mirroring",
+          "--logLevel=Information",
+          -- Try these updated paths which point directly to the libexec folder
+          "--razorSourceGenerator="
+            .. mason_path
+            .. "/Microsoft.CodeAnalysis.Razor.Compiler.dll",
+          "--razorDesignTimePath=" .. mason_path .. "/Targets/Microsoft.NET.Sdk.Razor.DesignTime.targets",
+          -- Explicitly include the extension dll
+          "--extension="
+            .. mason_path
+            .. "/Microsoft.VisualStudioCode.RazorExtension.dll",
         },
         config = {
-          -- This tells roslyn to use your global LspAttach keymaps above
-          on_attach = nil,
-          capabilities = vim.lsp.protocol.make_client_capabilities(),
+          on_attach = function(client, bufnr)
+            -- Force the token stream
+            vim.lsp.semantic_tokens.start(bufnr, client.id)
+          end,
+          settings = {
+            ["razor"] = {
+              language_server = {
+                cohosting_enabled = true,
+              },
+            },
+          },
         },
       })
     end,
-  },
-  -- {
-  --   "GustavEikaas/easy-dotnet.nvim",
-  --   dependencies = { "nvim-lua/plenary.nvim", "nvim-telescope/telescope.nvim" },
-  --   config = function()
-  --     require("easy-dotnet").setup({
-  --       -- This will automatically populate the quickfix list on build
-  --       diagnostics = {
-  --         setqflist = true,
-  --       },
-  --     })
-  --   end,
-  -- },
-  {
-    "folke/lazydev.nvim",
-    ft = "lua", -- only load on lua files
-    opts = {
-      library = {
-        -- Load luvit types when the `vim.uv` word is found
-        { path = "${3rd}/luv/library", words = { "vim%.uv" } },
-      },
-    },
   },
 }
