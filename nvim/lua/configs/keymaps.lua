@@ -1,22 +1,13 @@
--- Set <space> as the leader key
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
-
-local opt = vim.opt
-
-opt.number = true
-opt.relativenumber = true
-opt.mouse = "a"
-opt.ignorecase = true
-opt.smartcase = true
-opt.shiftwidth = 4
-opt.expandtab = true
-opt.termguicolors = true
-opt.timeoutlen = 300
-opt.clipboard = "unnamedplus"
-
 -- Window navigation
 local map = vim.keymap.set
+
+vim.keymap.set("n", "<left>", '<cmd>echo "Use h to move!!"<CR>')
+vim.keymap.set("n", "<right>", '<cmd>echo "Use l to move!!"<CR>')
+vim.keymap.set("n", "<up>", '<cmd>echo "Use k to move!!"<CR>')
+vim.keymap.set("n", "<down>", '<cmd>echo "Use j to move!!"<CR>')
+
+map("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear highlights on search" })
+map("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
 
 -- Resize splits with Ctrl + Arrows
 map("n", "<C-Up>", "<cmd>resize +2<cr>", { desc = "Increase window height" })
@@ -30,6 +21,14 @@ map("n", "<C-h>", "<C-w><C-h>", { desc = "Move focus to the left window" })
 map("n", "<C-l>", "<C-w><C-l>", { desc = "Move focus to the right window" })
 map("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower window" })
 map("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
+
+vim.api.nvim_create_autocmd("TextYankPost", {
+  desc = "Highlight when yanking (copying) text",
+  group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
+  callback = function()
+    vim.hl.on_yank()
+  end,
+})
 
 -- Create an autocommand group for SQL-specific maps
 vim.api.nvim_create_autocmd("FileType", {
@@ -55,17 +54,3 @@ vim.api.nvim_create_user_command("ExportCSV", db_utils.export_to_csv, { nargs = 
 
 -- Force dadbod completion to favor the database's casing
 vim.g.vim_dadbod_completion_mark = ""
-
--- C# Specific Config in init.lua
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "cs",
-  callback = function()
-    -- Map <F5> to your new smart function in dap.lua
-    vim.keymap.set("n", "<F5>", function()
-      require("plugins.dap").smart_continue()
-    end, { buffer = true, desc = "Smart Build/Continue" })
-
-    -- Insert mode support
-    vim.keymap.set("i", "<F5>", "<C-o><F5>", { buffer = true, remap = true })
-  end,
-})
