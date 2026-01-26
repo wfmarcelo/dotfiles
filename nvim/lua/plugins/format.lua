@@ -15,6 +15,16 @@ return {
         mode = "",
         desc = "[F]ormat buffer",
       },
+  "stevearc/conform.nvim",
+  event = { "BufWritePre" },
+  cmd = { "ConformInfo" },
+  opts = {
+    formatters_by_ft = {
+      lua = { "stylua" },
+      cs = { "lsp" },
+      sql = { "sql_formatter" },
+      xml = { "xmllint" },
+      csproj = { "xmllint" },
     },
     opts = {
       formatters_by_ft = {
